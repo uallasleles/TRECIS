@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+from datetime import datetime
 from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 
@@ -17,37 +18,6 @@ def index():
         message='Welcome to the Dockerized Flask MongoDB app!'
     )
 
-@application.route('/todo')
-def todo():
-    _todos = db.todo.find()
-
-    item = {}
-    data = []
-    for todo in _todos:
-        item = {
-            'id': str(todo['_id']),
-            'todo': todo['todo']
-        }
-        data.append(item)
-
-    return jsonify(
-        status=True,
-        data=data
-    )
-
-@application.route('/todo', methods=['POST'])
-def createTodo():
-    data = request.get_json(force=True)
-    item = {
-        'todo': data['todo']
-    }
-    db.todo.insert_one(item)
-
-    return jsonify(
-        status=True,
-        message='To-do saved successfully!'
-    ), 201
-
 @application.route('/plate')
 def plate():
     _plates = db.plate.find()
@@ -61,7 +31,7 @@ def plate():
             'plate': plate['plate']['plate'],
             'confidence': plate['plate']['confidence'],
             'processing_time_ms': plate['plate']['processing_time_ms'],
-            'coordinates': plate['plate']['coordinates'],
+            'coordinates': plate['plate']['coordinates']
         }
         data.append(item)
     

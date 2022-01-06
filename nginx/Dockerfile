@@ -1,4 +1,5 @@
 FROM nginx:alpine
+# FROM uallasleles/nginx:latest
 
 LABEL MAINTAINER="Uallas Leles Pereira <uallasleles@hotmail.com>"
 

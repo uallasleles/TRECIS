@@ -1,5 +1,7 @@
 FROM openalpr/agent:latest as final-stage
 
+LABEL MAINTAINER="Uallas Leles Pereira <uallasleles@hotmail.com>"
+
 ARG RTSP_SOURCE
 
 WORKDIR /
@@ -16,3 +18,5 @@ RUN apt-get install -y wget \
   && pip3 install openalpr \
   && pip3 install requests \
   && rm -rf /var/lib/apt/lists/*
+
+# ENTRYPOINT ["/bin/sh -c", "./bash.sh"]
