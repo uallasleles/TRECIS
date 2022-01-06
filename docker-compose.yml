@@ -2,11 +2,11 @@ version: '3'
 
 services:
 
-    flask:
+    api:
         build:
-            context: ./app
+            context: ./api
             dockerfile: Dockerfile
-        container_name: flask
+        container_name: api
         image: uallasleles/flask
         restart: unless-stopped
         environment:
@@ -17,8 +17,6 @@ services:
             - MONGODB_USERNAME=${MONGODB_USERNAME}
             - MONGODB_PASSWORD=${MONGODB_PASSWORD}
             - MONGODB_HOSTNAME=${MONGODB_HOSTNAME}
-        volumes:
-            - appdata:/var/www
         depends_on:
             - mongodb
         ports:
@@ -28,7 +26,7 @@ services:
             - backend
 
     mongodb:
-        image: uallasleles/mongo
+        image: mongo
         container_name: mongodb
         restart: unless-stopped
         command: mongod --auth
@@ -42,66 +40,34 @@ services:
             - MONDODB_LOG_DIR=${MONDODB_LOG_DIR}
         volumes:
             - mongodbdata:/data/db
-
         networks:
             - backend
 
-    webserver:
+    alpr:
         build:
-            context: nginx
-            dockerfile: Dockerfile
-        image: uallasleles/nginx
-        container_name: webserver
-        restart: unless-stopped
-        environment:
-            APP_ENV: "prod"
-            APP_NAME: "webserver"
-            APP_DEBUG: "true"
-            SERVICE_NAME: "webserver"
-        ports:
-            - "8080:80"
-            - "443:443"
-        volumes:
-            - nginxdata:/var/log/nginx
-        depends_on:
-            - flask
-        networks:
-            - frontend
-            - backend
-
-    openalpr:
-        build:
-            context: openalpr
+            context: ./alpr
             args:
                 - RTSP_SOURCE
             target: 'final-stage'
             dockerfile: Dockerfile
         image: uallasleles/alpr
-        container_name: openalpr
-
+        container_name: alpr
         environment:
             - RTSP_SOURCE=${RTSP_SOURCE}
-
         volumes:
-            - .\openalpr/:/var/lib/openalpr/
-            - .\openalpr\config/:/etc/openalpr/
-            - .\openalpr\config\stream.d/:/etc/openalpr/stream.d/
-            
-
+            - .\data\alpr\:/var/lib/openalpr/
+            - .\alpr\config\:/etc/openalpr/
+            - .\alpr\config\stream.d\:/etc/openalpr/stream.d/
         ports:
-            - 11300:11300
-            - 8355:8355
-            - 554:554
-
+            - "11300:11300"
+            - "8355:8355"
+            - "8554:8554"
         restart: unless-stopped
-
         depends_on:
             - mongodb
-
         networks:
           - backend
           - frontend
-
         cap_add:
             - SYS_NICE
 
@@ -113,8 +79,4 @@ networks:
 
 volumes:
     mongodbdata:
-        driver: local
-    appdata:
-        driver: local
-    nginxdata:
         driver: local
