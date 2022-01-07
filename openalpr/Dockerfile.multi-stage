@@ -2,8 +2,6 @@ FROM openalpr/agent:latest as final-stage
 
 LABEL MAINTAINER="Uallas Leles Pereira <uallasleles@hotmail.com>"
 
-ARG RTSP_SOURCE
-
 WORKDIR /
 
 COPY ["recognize.py", "/home"]

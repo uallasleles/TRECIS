@@ -2,8 +2,6 @@ FROM nginx:alpine
 
 LABEL MAINTAINER="Uallas Leles Pereira <uallasleles@hotmail.com>"
 
-WORKDIR /
-
 RUN apk --update add nginx && \
     ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stderr /var/log/nginx/error.log && \

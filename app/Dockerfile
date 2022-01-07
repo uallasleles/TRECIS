@@ -6,7 +6,7 @@ LABEL MAINTAINER="Uallas Leles Pereira <uallasleles@hotmail.com>"
 ENV GROUP_ID=1000 \
     USER_ID=1000
 
-WORKDIR /
+WORKDIR /var/www/
 
 ADD ./requirements.txt /var/www/requirements.txt
 RUN pip install -r requirements.txt --no-cache-dir
