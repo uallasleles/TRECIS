@@ -82,7 +82,7 @@ def main():
             if best_candidate['confidence'] > 80 and len(placa) == 7:
                 
                 # ENVIA PARA A API
-                res = requests.post('http://webserver:80/plate', json={"plate": plate})
+                res = requests.post('http://webserver:80/plate', json={"plate": results})
                 if res.ok:
                     print(res.json())
 

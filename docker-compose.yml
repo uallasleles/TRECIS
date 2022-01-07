@@ -1,24 +1,18 @@
-version: '3'
+version: '3.9'
 
 services:
 
     flask:
         build:
-            context: app
+            context: ./app
             dockerfile: Dockerfile
-        container_name: flask
-        image: flask-python:3.6
+        container_name: app
+        image: flask
         restart: unless-stopped
-        environment:
-            - APP_ENV="prod"
-            - APP_DEBUG="False"
-            - APP_PORT=5000
-            - MONGODB_DATABASE=${MONGODB_DATABASE}
-            - MONGODB_USERNAME=${MONGODB_USERNAME}
-            - MONGODB_PASSWORD=${MONGODB_PASSWORD}
-            - MONGODB_HOSTNAME=${MONGODB_HOSTNAME}
+        env_file:
+          - .env
         volumes:
-            - appdata:/var/www
+            - "appdata:/var/www"
         depends_on:
             - mongodb
         ports:
@@ -28,40 +22,41 @@ services:
             - backend
 
     mongodb:
-        image: mongo:4.0.8
+        image: mongo 
         container_name: mongodb
-        restart: unless-stopped
+        restart: always
         command: mongod --auth
         ports:
-          - "27017:27017"
+            - "27017:27017"
         environment:
-            - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
-            - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
-            - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
-            - MONGODB_DATA_DIR=${MONGODB_DATA_DIR}
-            - MONDODB_LOG_DIR=${MONDODB_LOG_DIR}
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+            MONGO_INITDB_DATABASE:      ${MONGO_INITDB_DATABASE}
+            MONGODB_DATA_DIR:           ${MONGODB_DATA_DIR}
+            MONDODB_LOG_DIR:            ${MONDODB_LOG_DIR}
         volumes:
-            - .\data\mongodbdata\:/data/db
+            - "mongodbdata:/data/db"
+
         networks:
             - backend
 
     webserver:
         build:
-            context: nginx
+            context: ./nginx
             dockerfile: Dockerfile
         image: nginx
         container_name: webserver
         restart: unless-stopped
         environment:
-            APP_ENV: "prod"
-            APP_NAME: "webserver"
+            APP_ENV: prod
+            APP_NAME: webserver
             APP_DEBUG: "true"
-            SERVICE_NAME: "webserver"
+            SERVICE_NAME: webserver
         ports:
             - "8080:80"
             - "443:443"
         volumes:
-            - nginxdata:/var/log/nginx
+            - "nginxdata:/var/log/nginx"
         depends_on:
             - flask
         networks:
@@ -75,21 +70,20 @@ services:
                 - RTSP_SOURCE
             target: 'final-stage'
             dockerfile: Dockerfile
-        image: alpr
         container_name: openalpr
-
+        image: openalpr/agent:latest
         environment:
-            - RTSP_SOURCE=${RTSP_SOURCE}
+            RTSP_SOURCE: ${RTSP_SOURCE}
 
         volumes:
-            - .\openalpr\config:/etc/openalpr
-            - .\openalpr\config\stream.d:/etc/openalpr/stream.d
-            - .\data\openalpr:/var/lib/openalpr
-
+            - "./data/openalpr:/var/lib/openalpr"
+            - "./openalpr/config:/etc/openalpr"
+            - "./openalpr/config/stream.d:/etc/openalpr/stream.d"
+            
         ports:
-            - 11300:11300
-            - 8355:8355
-            - 554:554
+            - "11300:11300"
+            - "8355:8355"
+            - "554:554"
 
         restart: unless-stopped
 
@@ -100,8 +94,8 @@ services:
           - backend
           - frontend
 
-        cap_add:
-            - SYS_NICE
+        # cap_add:
+            # - SYS_NICE
 
 networks:
     frontend:
