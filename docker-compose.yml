@@ -2,12 +2,12 @@ version: '3'
 
 services:
 
-    flask:
+    api:
         build:
             context: ./app
             dockerfile: Dockerfile
         container_name: flask
-        image: uallasleles/flask
+        image: flask
         restart: unless-stopped
         environment:
             - APP_ENV="prod"
@@ -28,7 +28,7 @@ services:
             - backend
 
     mongodb:
-        image: uallasleles/mongo
+        image: mongo 
         container_name: mongodb
         restart: unless-stopped
         command: mongod --auth
@@ -83,15 +83,14 @@ services:
             - RTSP_SOURCE=${RTSP_SOURCE}
 
         volumes:
-            - .\openalpr/:/var/lib/openalpr/
-            - .\openalpr\config/:/etc/openalpr/
-            - .\openalpr\config\stream.d/:/etc/openalpr/stream.d/
+            - .\data\openalpr:/var/lib/openalpr
+            - .\openalpr\config:/etc/openalpr
+            - .\openalpr\config\stream.d:/etc/openalpr/stream.d
             
-
         ports:
-            - 11300:11300
-            - 8355:8355
-            - 554:554
+            - "11300:11300"
+            - "8355:8355"
+            - "554:554"
 
         restart: unless-stopped
 

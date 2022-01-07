@@ -1,7 +1,8 @@
 FROM nginx:alpine
-# FROM uallasleles/nginx:latest
 
 LABEL MAINTAINER="Uallas Leles Pereira <uallasleles@hotmail.com>"
+
+WORKDIR /
 
 RUN apk --update add nginx && \
     ln -sf /dev/stdout /var/log/nginx/access.log && \
@@ -14,4 +15,6 @@ RUN apk --update add nginx && \
 COPY conf.d/app.conf /etc/nginx/conf.d/app.conf
 
 EXPOSE 80 443
+
 CMD ["nginx", "-g", "daemon off;"]
+

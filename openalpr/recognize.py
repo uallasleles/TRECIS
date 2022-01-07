@@ -7,7 +7,6 @@
 import numpy as np
 import sys, os
 import cv2
-from datetime import datetime
 from openalpr import Alpr
 import requests
 from pprint import pprint
