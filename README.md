@@ -1,5 +1,5 @@
-## Compose sample application
-### Python/Flask application with Nginx proxy and a Mongo database
+## COI - TRECIS
+### Python/Flask/ALPR application with Mongo database
 
 Project structure:
 ```
@@ -8,66 +8,54 @@ Project structure:
 ├── flask
 │   ├── Dockerfile
 │   ├── requirements.txt
-│   └── server.py
-└── nginx
-    └── nginx.conf
+│   └── api.py
+└── openalpr
+│   ├── Dockerfile
+│   ├── requirements.txt
+    └── recognize.py
 
 ```
 
 [_docker-compose.yaml_](docker-compose.yaml)
 ```
 services:
-  web:
-    build: app
+  api:
+    build: api
+  alpr:
+    build: openalpr
     ports:
-    - 80:80
-  backend:
-    build: flask
-    ...
+      - 11300:11300
+      - 8355:8355
+      - 554:554
   mongo:
     image: mongo
-```
-The compose file defines an application with three services `web`, `backend` and `db`.
-When deploying the application, docker-compose maps port 80 of the web service container to port 80 of the host as specified in the file.
-Make sure port 80 on the host is not being used by another container, otherwise the port should be changed.
-
-## Deploy with docker-compose
-
-```
-$ docker-compose up -d
-Creating network "nginx-flask-mongo_default" with the default driver
-Pulling mongo (mongo:)...
-latest: Pulling from library/mongo
-423ae2b273f4: Pull complete
-...
-...
-Status: Downloaded newer image for nginx:latest
-Creating nginx-flask-mongo_mongo_1 ... done
-Creating nginx-flask-mongo_backend_1 ... done
-Creating nginx-flask-mongo_web_1     ... done
-
+    ports:
+      - "27017:27017"
 ```
 
-## Expected result
+## Setup
 
-Listing containers must show three containers running and the port mapping as below:
 ```
-$ docker ps
-CONTAINER ID        IMAGE                        COMMAND                  CREATED             STATUS              PORTS                  NAMES
-a0f4ebe686ff        nginx                       "/bin/bash -c 'envsu…"   About a minute ago   Up About a minute   0.0.0.0:80->80/tcp     nginx-flask-mongo_web_1
-dba87a080821        nginx-flask-mongo_backend   "./server.py"            About a minute ago   Up About a minute                          nginx-flask-mongo_backend_1
-d7eea5481c77        mongo                       "docker-entrypoint.s…"   About a minute ago   Up About a minute   27017/tcp              nginx-flask-mongo_mongo_1
+> docker-compose up --detach --build 
+> docker exec -it mongodb bash
+$ root:/# mongo -u coi -p 1234
+
+> use carsdb
+> db.createUser({user: 'alpruser', pwd: '1234', roles: [{role: 'readWrite', db: 'carsdb'}]})
+> exit
+
+$ mongo -u alpruser -p 1234 --authenticationDatabase carsdb
+
+> exit
+
+$ exit
+
+docker exec -it alpr bash
+python home/recognize.py
 ```
 
-After the application starts, navigate to `http://localhost:80` in your web browser or run:
 ```
-$ curl localhost:80
-Hello from the MongoDB client!
-
-$ curl -i -X POST -H "Content-Type:application/json" -d "{  \"todo\": \"Frodo\" }" http://localhost:8080/todo
-```
-
-Stop and remove the containers
-```
-$ docker-compose down
+docker-compose build --pull
+docker-compose push docker-compose up -d --build
+docker exec -i CONTAINER_ID /bin/bash -c "export VAR1=VAL1"
 ```
