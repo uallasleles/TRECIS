@@ -7,7 +7,6 @@
 import numpy as np
 import sys, os
 import cv2
-from datetime import datetime
 from openalpr import Alpr
 import requests
 from pprint import pprint
@@ -35,8 +34,8 @@ def open_cam_rtsp(uri, width=1280, height=720, latency=2000):
                'rtph264depay ! h264parse ! omxh264dec ! nvvidconv ! '
                'video/x-raw, width=(int){}, height=(int){}, format=(string)BGRx ! '
                'videoconvert ! appsink max-buffers=5').format(uri, latency, width, height)
-    # return cv2.VideoCapture(RTSP_SOURCE)
-    return cv2.VideoCapture(gst_str, cv2.CAP_GSTREAMER)
+    return cv2.VideoCapture(RTSP_SOURCE)
+    # return cv2.VideoCapture(gst_str, cv2.CAP_GSTREAMER)
 
 enable_GPU = False
 
