@@ -1,0 +1,1 @@
+docker exec -i app /bin/sh -c "cat app.py"

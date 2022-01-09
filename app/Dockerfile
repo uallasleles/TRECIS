@@ -1,5 +1,5 @@
 FROM python:3.6.8-alpine3.9
-# FROM uallasleles/flask:latest
+
 
 LABEL maintainer="Uallas Leles Pereira <uallasleles@hotmail.com>"
 
@@ -12,7 +12,7 @@ COPY ./requirements.txt /var/www/requirements.txt
 RUN pip install -r requirements.txt --no-cache-dir
 
 COPY . /var/www/
-RUN pip install gunicorn
+RUN pip install --no-cache-dir gunicorn
 
 RUN addgroup -g $GROUP_ID www \
     && adduser -D -u $USER_ID -G www www -s /bin/sh

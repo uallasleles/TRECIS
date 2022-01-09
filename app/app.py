@@ -4,6 +4,7 @@ from datetime import datetime
 from flask import Flask, request, jsonify
 from db import get_db
 
+
 application = Flask(__name__)
 
 db = get_db()
@@ -49,6 +50,39 @@ def addPlate():
         status=True,
         message='License Plate registred successfully!'
     ), 201
+
+@application.route('/send')
+def send():
+    filter = {}
+    project = {
+        'plate.epoch_time': True, 
+        'plate.img_height': True, 
+        'plate.img_width': True, 
+        'plate.results.plate': True, 
+        'plate.results.confidence': True, 
+        'plate.results.coordinates.x': True, 
+        'plate.results.coordinates.y': True, 
+        'plate.results.vehicle_region.x': True, 
+        'plate.results.vehicle_region.y': True, 
+        'plate.results.vehicle_region.height': True, 
+        'plate.results.vehicle_region.width': True
+    }
+
+    result = db.plate.find(
+        filter=filter,
+        projection=project
+    )
+    
+    data = []
+
+    # filtro de campos
+    for plate in result:
+        data.append(plate)
+    
+    return jsonify(
+        status=True,
+        data=data
+    )
 
 if __name__ == "__main__":
     ENVIRONMENT_DEBUG = os.environ.get("APP_DEBUG", True)

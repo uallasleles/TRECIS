@@ -9,8 +9,6 @@ WORKDIR /
 COPY ["recognize.py", "/home"]
 
 RUN apt-get update 
-  # && apt-get clean \
-  # && rm -rf /var/lib/apt/lists/*
 RUN apt-get install -y wget \
   && apt-get install -y nano \
   && apt-get install -y python3-pip python3-dev \
@@ -20,6 +18,5 @@ RUN apt-get install -y wget \
   && pip3 install opencv-python \
   && pip3 install openalpr \
   && pip3 install requests \
-  && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 

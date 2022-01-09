@@ -1,5 +1,6 @@
 env
 .env
 *.md
+*.pyc
 data/mongodbdata/*
 data/openalpr/openalpr_system_status.json

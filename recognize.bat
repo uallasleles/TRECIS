@@ -1,0 +1,1 @@
+docker exec -i openalpr /bin/bash -c "python3 /home/recognize.py"

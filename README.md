@@ -59,3 +59,16 @@ docker-compose build --pull
 docker-compose push docker-compose up -d --build
 docker exec -i CONTAINER_ID /bin/bash -c "export VAR1=VAL1"
 ```
+
+Como alternativa, você pode armazenar init-mongo.sh em configs (docker config create) e montá-lo com:
+
+configs:
+    init-mongo.sh:
+        external: true
+...
+services:
+    mongo:
+        ...
+        configs:
+            - source: init-mongo.sh
+              target: /docker-entrypoint-initdb.d/init-mongo.sh
