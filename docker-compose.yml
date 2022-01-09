@@ -94,8 +94,8 @@ services:
           - backend
           - frontend
 
-        # cap_add:
-            # - SYS_NICE
+        cap_add:
+            - SYS_NICE
 
 networks:
     frontend:
