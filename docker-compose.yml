@@ -9,6 +9,8 @@ services:
         container_name: app
         image: flask
         restart: unless-stopped
+        env_file:
+          - .env
         volumes:
             - "appdata:/var/www"
         depends_on:
@@ -32,12 +34,8 @@ services:
             MONGO_INITDB_DATABASE:      ${MONGO_INITDB_DATABASE}
             MONGODB_DATA_DIR:           ${MONGODB_DATA_DIR}
             MONDODB_LOG_DIR:            ${MONDODB_LOG_DIR}
-            MONGODB_DATABASE:           ${MONGODB_DATABASE}
-            MONGODB_USERNAME:           ${MONGODB_USERNAME}
-            MONGODB_PASSWORD:           ${MONGODB_PASSWORD}
         volumes:
             - "./data/mongodbdata:/data/db"
-            - "./init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh"
 
         networks:
             - backend
@@ -72,7 +70,6 @@ services:
                 - RTSP_SOURCE
             target: 'final-stage'
             dockerfile: Dockerfile
-        env_file: .env
         container_name: openalpr
         image: openalpr/agent:latest
         environment:

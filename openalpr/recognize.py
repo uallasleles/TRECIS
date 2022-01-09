@@ -1,5 +1,6 @@
-# test_camera.py
-#
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # Open an RTSP stream and feed image frames to 'openalpr'
 # for real-time license plate recognition.
 # https://gist.github.com/jkjung-avt/790a1410b91c170187f8dbdb8cc698c8
