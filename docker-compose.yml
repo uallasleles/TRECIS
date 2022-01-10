@@ -2,111 +2,103 @@ version: '3.9'
 
 services:
 
-    flask:
-        build:
-            context: ./app
-            dockerfile: Dockerfile
-        container_name: app
-        image: flask
-        restart: unless-stopped
-        env_file:
-          - .env
-        volumes:
-            - "appdata:/var/www"
-        depends_on:
-            - mongodb
-        ports:
-            - "5000:5000"
-        networks:
-            - frontend
-            - backend
+  flask:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: app
+    image: flask
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - appdata:/var/www
+    depends_on:
+      - mongodb
+    ports:
+      - "5000:5000"
+    networks:
+      - frontend
+      - backend
 
-    mongodb:
-        image: mongo 
-        container_name: mongodb
-        restart: always
-        command: mongod --auth
-        ports:
-            - "27017:27017"
-        environment:
-            MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-            MONGO_INITDB_DATABASE:      ${MONGO_INITDB_DATABASE}
-            MONGODB_DATA_DIR:           ${MONGODB_DATA_DIR}
-            MONDODB_LOG_DIR:            ${MONDODB_LOG_DIR}
-        volumes:
-            - "mongodbdata:/data/db"
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: always
+    command: mongod --auth
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+      MONGODB_DATA_DIR: ${MONGODB_DATA_DIR}
+      MONDODB_LOG_DIR: ${MONDODB_LOG_DIR}
+    volumes:
+      - mongodbdata:/data/db
+    networks:
+      - backend
 
-        networks:
-            - backend
+  webserver:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: nginx
+    container_name: webserver
+    restart: unless-stopped
+    environment:
+      APP_ENV: prod
+      APP_NAME: webserver
+      APP_DEBUG: "true"
+      SERVICE_NAME: webserver
+    ports:
+      - "8080:80"
+      - "443:443"
+    volumes:
+      - nginxdata:/var/log/nginx
+    depends_on:
+      - flask
+    networks:
+      - frontend
+      - backend
 
-    webserver:
-        build:
-            context: ./nginx
-            dockerfile: Dockerfile
-        image: nginx
-        container_name: webserver
-        restart: unless-stopped
-        environment:
-            APP_ENV: prod
-            APP_NAME: webserver
-            APP_DEBUG: "true"
-            SERVICE_NAME: webserver
-        ports:
-            - "8080:80"
-            - "443:443"
-        volumes:
-            - "nginxdata:/var/log/nginx"
-        depends_on:
-            - flask
-        networks:
-            - frontend
-            - backend
-
-    openalpr:
-        build:
-            context: openalpr
-            args:
-                - RTSP_SOURCE
-            target: 'final-stage'
-            dockerfile: Dockerfile
-        container_name: openalpr
-        image: openalpr/agent:latest
-        environment:
-            RTSP_SOURCE: ${RTSP_SOURCE}
-
-        volumes:
-            - "./data/openalpr:/var/lib/openalpr"
-            - "./openalpr/config:/etc/openalpr"
-            - "./openalpr/config/stream.d:/etc/openalpr/stream.d"
-            
-        ports:
-            - "11300:11300"
-            - "8355:8355"
-            - "554:554"
-
-        restart: unless-stopped
-
-        depends_on:
-            - mongodb
-
-        networks:
-          - backend
-          - frontend
-
-        cap_add:
-            - SYS_NICE
+  openalpr:
+    image: openalpr
+    container_name: openalpr
+    build:
+      context: ./openalpr
+      args:
+        - RTSP_SOURCE
+      target: 'final-stage'
+      dockerfile: Dockerfile
+    environment:
+      RTSP_SOURCE: ${RTSP_SOURCE}
+    volumes:
+      - E:\GitHub\Awesome-Compose\wmb\TRECIS\openalpr\config:/etc/openalpr/
+      - E:\GitHub\Awesome-Compose\wmb\TRECIS\data\openalpr:/var/lib/openalpr/
+    ports:
+      - "11300:11300"
+      - "8355:8355"
+      - "554:554"
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+    networks:
+      - backend
+      - frontend
+    cap_add:
+      - SYS_NICE
 
 networks:
-    frontend:
-        driver: bridge
-    backend:
-        driver: bridge
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
 
 volumes:
-    mongodbdata:
-        driver: local
-    appdata:
-        driver: local
-    nginxdata:
-        driver: local
+  appdata:
+    driver: local
+  nginxdata:
+    driver: local
+  mongodbdata:
+    driver: local
