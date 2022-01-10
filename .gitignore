@@ -4,3 +4,4 @@ env
 *.pyc
 data/mongodbdata/*
 data/openalpr/openalpr_system_status.json
+data/openalpr/openalpr_system_status.json
