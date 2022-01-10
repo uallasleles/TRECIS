@@ -25,7 +25,7 @@ RUNTIME_DATA_PATH       = '/usr/share/openalpr/runtime_data'
 ALPR_COUNTRY            = 'br'
 
 RTSP_SOURCE             = os.environ.get('RTSP_SOURCE')
-TEST_VIDEO_FILE_PATH    = '/var/lib/openalpr/cars.mp4'
+TEST_VIDEO_FILE_PATH    = '/var/lib/openalpr/videoclips/cars.mp4'
 WINDOW_NAME             = 'openalpr'
 FRAME_SKIP              = 15
 
