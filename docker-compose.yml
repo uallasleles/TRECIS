@@ -8,9 +8,13 @@ services:
       dockerfile: Dockerfile
     container_name: app
     image: flask
-    restart: unless-stopped
-    env_file:
-      - .env
+    restart: always
+    environment:
+      MONGODB_DATABASE: ${MONGODB_DATABASE}
+      MONGODB_USERNAME: ${MONGODB_USERNAME}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD}
+      MONGODB_HOSTNAME: ${MONGODB_HOSTNAME}
+
     volumes:
       - appdata:/var/www
     depends_on:
@@ -34,8 +38,16 @@ services:
       MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
       MONGODB_DATA_DIR: ${MONGODB_DATA_DIR}
       MONDODB_LOG_DIR: ${MONDODB_LOG_DIR}
+      APP_ENV: ${APP_ENV}
+      APP_DEBUG: ${APP_DEBUG}
+      APP_PORT: ${APP_PORT}
+      MONGODB_DATABASE: ${MONGODB_DATABASE}
+      MONGODB_USERNAME: ${MONGODB_USERNAME}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD}
+      MONGODB_HOSTNAME: ${MONGODB_HOSTNAME}
+
     volumes:
-      - mongodbdata:/data/db
+      - ./data/mongodbdata:/data/db:rw
     networks:
       - backend
 
@@ -45,7 +57,7 @@ services:
       dockerfile: Dockerfile
     image: nginx
     container_name: webserver
-    restart: unless-stopped
+    restart: always
     environment:
       APP_ENV: prod
       APP_NAME: webserver
@@ -73,14 +85,18 @@ services:
       dockerfile: Dockerfile
     environment:
       RTSP_SOURCE: ${RTSP_SOURCE}
+      MONGODB_DATABASE: ${MONGODB_DATABASE}
+      MONGODB_USERNAME: ${MONGODB_USERNAME}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD}
+      MONGODB_HOSTNAME: ${MONGODB_HOSTNAME}
     volumes:
-      - E:\GitHub\Awesome-Compose\wmb\TRECIS\openalpr\config:/etc/openalpr/
-      - E:\GitHub\Awesome-Compose\wmb\TRECIS\data\openalpr:/var/lib/openalpr/
+      - E:\GitHub\Awesome-Compose\wmb\TRECIS\openalpr\config:/etc/openalpr/:rw
+      - E:\GitHub\Awesome-Compose\wmb\TRECIS\data\openalpr:/var/lib/openalpr/:rw
     ports:
       - "11300:11300"
       - "8355:8355"
       - "554:554"
-    restart: unless-stopped
+    restart: always
     depends_on:
       - mongodb
     networks:
