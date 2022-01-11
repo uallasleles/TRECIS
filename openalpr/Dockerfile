@@ -1,12 +1,9 @@
 FROM openalpr/agent:latest as final-stage
 
-LABEL MAINTAINER="Uallas Leles Pereira <uallasleles@hotmail.com>"
-
-ARG RTSP_SOURCE
-
 WORKDIR /
-
 COPY ["recognize.py", "/home"]
+COPY ["def_api.py", "/home"]
+COPY ["def_salva.py", "/home"]
 
 RUN apt-get update
 RUN apt-get install -y wget \
@@ -19,4 +16,3 @@ RUN apt-get install -y wget \
   && pip3 install openalpr \
   && pip3 install requests \
   && rm -rf /var/lib/apt/lists/*
-

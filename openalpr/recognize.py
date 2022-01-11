@@ -4,12 +4,14 @@
 # for real-time license plate recognition.
 # https://gist.github.com/jkjung-avt/790a1410b91c170187f8dbdb8cc698c8
 
-import numpy as np
 import sys, os
 import cv2
 from openalpr import Alpr
+from def_api import Api
+from def_salva import Salva
 import requests
 from pprint import pprint
+import base64
 
 # See https://docs.rekor.ai/rekor-scout/scout-agent/nvidia-gpu-acceleration
 # GPU processing must use a single Alpr object and single thread per GPU.
@@ -25,7 +27,7 @@ RUNTIME_DATA_PATH       = '/usr/share/openalpr/runtime_data'
 ALPR_COUNTRY            = 'br'
 
 RTSP_SOURCE             = os.environ.get('RTSP_SOURCE')
-TEST_VIDEO_FILE_PATH    = '/var/lib/openalpr/cars.mp4'
+TEST_VIDEO_FILE_PATH    = '/var/lib/openalpr/videoclips/cars.mp4'
 WINDOW_NAME             = 'openalpr'
 FRAME_SKIP              = 15
 
@@ -40,6 +42,10 @@ def open_cam_rtsp(uri, width=1280, height=720, latency=2000):
 enable_GPU = False
 
 def main():
+    
+    # api = Api(options.camera_name)
+    api = Api('camera_name_test')
+    # gps = Gps()
     
     # Initialize instances
     alpr = Alpr(ALPR_COUNTRY, OPENALPR_CONFIG, RUNTIME_DATA_PATH)
@@ -72,8 +78,37 @@ def main():
         # cv2.imshow(WINDOW_NAME, frame)
 
         results = alpr.recognize_ndarray(frame)
-        for i, plate in enumerate(results['results']):
+        img64 = base64.b64encode(frame).decode('utf-8')
 
+            #TODO pegar threshold de confiança de arquivo de configuração
+            # if confidence > 80 and len(plate) == 7:
+            #     save = Salva(plate)
+            #     img_name = save.SalvaFullImage(frame)
+            #     crop_placa = frame[coord_ini_y:coord_fim_y, coord_ini_x:coord_fim_x]
+            #     save.SalvaCropImage(crop_placa)
+            #     gps_lat = None
+            #     gps_log = None
+            #     gps_qual = None
+
+            #     # ENVIAR PARA A API
+            #     api.send(
+            #         plate,
+            #         confidence,
+            #         '{},{}'.format(coord_ini_x, coord_ini_y), 
+            #         '{},{}'.format(coord_fim_x, coord_fim_y),
+            #         gps_lat, 
+            #         gps_log,
+            #         gps_qual, 
+            #         img_name,
+            #     )
+
+                # res = requests.post('http://webserver:80/plate', json={"plate": results})
+
+                # if res.ok:
+                #     print(res.json())
+
+        for i, plate in enumerate(results['results']):
+            
             # PEGA DOIS VALORES PARA VALIDAÇÃO
             best_candidate = plate['candidates'][0]
             placa = best_candidate['plate'].upper()
