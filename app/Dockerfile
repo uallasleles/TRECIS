@@ -9,8 +9,7 @@ ENV GROUP_ID=1000 \
 WORKDIR /var/www/
 
 ADD ./requirements.txt /var/www/requirements.txt
-
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt --no-cache-dir
 
 ADD . /var/www/
 RUN pip install gunicorn

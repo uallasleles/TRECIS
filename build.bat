@@ -18,5 +18,5 @@ docker-compose up -d --build
 
 @REM docker exec -it openalpr /bin/bash -c "export RTSP_SOURCE=rtsp://admin:1234@192.168.0.80:8554/h264_pcm.sdp"
 
-@REM docker exec -it openalpr /bin/bash -c "python3 /home/recognize.py"
+@REM docker exec -it openalpr /bin/bash -c "python /home/recognize.py"
 
