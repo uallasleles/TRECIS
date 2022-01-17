@@ -20,24 +20,19 @@ def del_doc(doc_id, file_name):
     except Exception as e:
         exception(e)
 
-    # try:
-    #     print("Removendo arquivo de imagem do disco local ...")
+    try:
+        print("Removendo arquivo de imagem do disco local ...")
 
-    #     if os.path.exists("demofile.txt"):
-    #         os.remove("demofile.txt")
-    #     else:
-    #         print("The file does not exist")
+        path_base = "/var/lib/openalpr/plateimages"            
+        full_img_dir = ("{}/full_image".format(path_base))
+        crop_img_dir = ("{}/crop_image".format(path_base))
 
-    #     path_base = "/var/lib/openalpr/plateimages"            
-    #     full_img_dir = ("{}/full_image".format(path_base))
-    #     crop_img_dir = ("{}/crop_image".format(path_base))
+        if os.path.isfile(os.path.join(full_img_dir, file_name)):
+            os.remove(os.path.join(full_img_dir, file_name))
+            os.remove(os.path.join(crop_img_dir, file_name))
 
-    #     if os.path.isfile(os.path.join(full_img_dir, file_name)):
-    #         os.remove(os.path.join(full_img_dir, file_name))
-    #         os.remove(os.path.join(crop_img_dir, file_name))
-
-    # except Exception as e:
-    #     exception(e)
+    except Exception as e:
+        exception(e)
 
 def send(doc):    
     api = Api(doc['plate']['cam_name'])

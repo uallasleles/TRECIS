@@ -121,6 +121,8 @@ services:
       MONGODB_HOSTNAME: ${MONGODB_HOSTNAME}
       URL_ENDPOINT:     ${URL_ENDPOINT}    
 
+    volumes:      
+      - E:\GitHub\Awesome-Compose\wmb\TRECIS\data\openalpr:/var/lib/openalpr:rw
     depends_on:
       - mongodb
 
