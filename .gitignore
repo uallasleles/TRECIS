@@ -2,3 +2,5 @@ env
 .env
 *.md
 data/mongodbdata/*
+data/openalpr/plateimages/crop_image/*
+data/openalpr/plateimages/full_image/*
