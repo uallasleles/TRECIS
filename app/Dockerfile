@@ -1,22 +1,19 @@
 FROM python:3.6.8-alpine3.9
-# FROM uallasleles/flask:latest
-
-LABEL MAINTAINER="Uallas Leles Pereira <uallasleles@hotmail.com>"
 
 ENV GROUP_ID=1000 \
     USER_ID=1000
 
-WORKDIR /var/www/
+WORKDIR /var/www
 
-ADD ./requirements.txt /var/www/requirements.txt
-
+COPY requirements.txt /var/www/
 RUN pip install --no-cache-dir -r requirements.txt
 
-ADD . /var/www/
-RUN pip install gunicorn
+COPY . /var/www/
 
-RUN addgroup -g $GROUP_ID www
-RUN adduser -D -u $USER_ID -G www www -s /bin/sh
+RUN pip install --no-cache-dir gunicorn==20.1.0
+
+RUN addgroup --gid $GROUP_ID www && \
+    adduser -D --uid $USER_ID -G www www --shell /bin/sh
 
 USER www
 

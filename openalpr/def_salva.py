@@ -1,11 +1,13 @@
 import cv2
 import datetime
-from LoggErro import Log
+# from LoggErro import Log
+import logging
 import sys
 import os
-erro = Log()
+# erro = Log()
 
-path_base = "{}/trecis/webapp/images".format(os.environ['HOME'])
+# path_base = "{}/trecis/webapp/images".format(os.environ['HOME'])
+path_base = "/var/lib/openalpr/plateimages"
 
 class Salva(object):
     nome_file = ""
@@ -23,10 +25,12 @@ class Salva(object):
                     raise Exception("Could not write image")
                 return self.nome_file
         except OSError as err:
-            erro.grava("Save.OS error: {0}".format(err))
+            # erro.grava("Save.OS error: {0}".format(err))
+            logging.exception("message")
             return None
         except:
-            erro.grava("Save.Erro: {0}".format(sys.exc_info()[0]))
+            # erro.grava("Save.Erro: {0}".format(sys.exc_info()[0]))
+            logging.exception("message")
             return None
 
     def SalvaCropImage(self, imagemCrop):
@@ -37,10 +41,12 @@ class Salva(object):
                     raise Exception("Could not write image")
                 return self.nome_file
         except OSError as err:
-            erro.grava("Save.OS error: {0}".format(err))
+            # erro.grava("Save.OS error: {0}".format(err))
+            logging.exception("message")
             return None
         except:
-            erro.grava("Save.Erro: {0}".format(sys.exc_info()[0]))
+            # erro.grava("Save.Erro: {0}".format(sys.exc_info()[0]))
+            logging.exception("message")
             return None
 
 
