@@ -156,7 +156,8 @@ def main():
                 
                 # gps = Gps()
                 # gps_lat, gps_log, gps_qual, _ = gps.get_latlog()
-                cam_name = options.camera_name
+                # cam_name = options.camera_name
+                cam_name = os.environ.get('CAM_NAME')
 
                 # ADD FIELDS IN RESULTS
                 rs['cam_name'] = cam_name
