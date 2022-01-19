@@ -1,12 +1,8 @@
 import os
-import base64
 from datetime import datetime
 from logging import exception
-from time import time, sleep
 from send2api import Api
-from bson import json_util
 from bson.objectid import ObjectId
-import json
 import database_connection
 import internet_connection
 
@@ -20,9 +16,7 @@ def del_doc(doc_id, file_name):
     except Exception as e:
         exception(e)
 
-    try:
-        print("Removendo arquivo de imagem do disco local ...")
-
+    try:        
         path_base = "/var/lib/openalpr/plateimages"            
         full_img_dir = ("{}/full_image".format(path_base))
         crop_img_dir = ("{}/crop_image".format(path_base))
@@ -34,18 +28,17 @@ def del_doc(doc_id, file_name):
     except Exception as e:
         exception(e)
 
-def send(doc):    
+def send(doc):
+    status = 0
     api = Api(doc['plate']['cam_name'])
     
     try:    
         status = api.send(
             doc['plate']['plate'],
+            doc['plate']['datetime'],
             doc['plate']['confidence'],
             doc['plate']['coordinates'][0],
             doc['plate']['coordinates'][1],
-            doc['plate']['gps_lat'],
-            doc['plate']['gps_log'],
-            doc['plate']['gps_qual'],
             doc['plate']['img_name']
             )
     except:
@@ -53,16 +46,14 @@ def send(doc):
     finally:
         return status
 
-def cleansing():    
+def cleansing():
     projection = {
         '_id': True, 
         'plate.plate': True, 
+        'plate.epoch_time': True,
         'plate.confidence': True, 
         'plate.coordinates.x': True, 
         'plate.coordinates.y': True, 
-        'plate.gps_lat': True, 
-        'plate.gps_log': True, 
-        'plate.gps_qual': True, 
         'plate.img_name': True,        
         'plate.cam_name': True
         }
@@ -75,8 +66,12 @@ def cleansing():
     
     for i in rs:
         code = None
+
         doc_id = i['_id']
         file_name = '{}.jpg'.format(i['plate']['img_name'])
+
+        # Converte de epoch time para datetime com milisegundos, (ms pois este epoch time possui 13 dígitos)
+        i['plate']['datetime'] = datetime.fromtimestamp( i['plate']['epoch_time'] / 1000 ).isoformat(sep=' ', timespec='milliseconds')
         
         if internet_connection.internet_connection_test() == True:
             try:
@@ -87,9 +82,7 @@ def cleansing():
             finally: 
                 if code == 200:
                     print(f"{datetime.now()} - Deletando registro do banco de dados...")
-                    del_doc(doc_id, file_name)
-            sleep(1)
+                    del_doc(doc_id, file_name)            
 
 if __name__ == "__main__":    
     cleansing()
-
