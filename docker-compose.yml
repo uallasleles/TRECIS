@@ -15,9 +15,8 @@ services:
       MONGODB_PASSWORD: ${MONGODB_PASSWORD}
       MONGODB_HOSTNAME: ${MONGODB_HOSTNAME}
       URL_ENDPOINT:     ${URL_ENDPOINT}
-
     volumes:
-      - appdata:/var/www
+      - appdata:/var/www 
     depends_on:
       - mongodb
     ports:
@@ -46,9 +45,8 @@ services:
       MONGODB_USERNAME: ${MONGODB_USERNAME}
       MONGODB_PASSWORD: ${MONGODB_PASSWORD}
       MONGODB_HOSTNAME: ${MONGODB_HOSTNAME}
-
     volumes:
-      - ./data/mongodbdata:/data/db:rw
+      - ${HOSTDB_DATA}:${MONGODB_DATA} 
     networks:
       - backend
 
@@ -92,9 +90,9 @@ services:
       MONGODB_PASSWORD: ${MONGODB_PASSWORD}
       MONGODB_HOSTNAME: ${MONGODB_HOSTNAME}
     volumes:
-      - E:\GitHub\Awesome-Compose\wmb\TRECIS\openalpr\config:/etc/openalpr
-      - E:\GitHub\Awesome-Compose\wmb\TRECIS\data\openalpr:/var/lib/openalpr
-      - .\openalpr:/home
+      - ${HOST_SOURCE_ALPR}:${ALPR_PATH_SOURCE} 
+      - ${HOST_PATH_CONFIG}:${ALPR_PATH_CONFIG} 
+      - ${HOST_PATH_DATA}:${ALPR_PATH_DATA} 
     ports:
       - "11300:11300"
       - "8355:8355"
@@ -121,13 +119,11 @@ services:
       MONGODB_PASSWORD: ${MONGODB_PASSWORD}
       MONGODB_HOSTNAME: ${MONGODB_HOSTNAME}
       URL_ENDPOINT:     ${URL_ENDPOINT}    
-
     volumes:      
-      - E:\GitHub\Awesome-Compose\wmb\TRECIS\data\openalpr:/var/lib/openalpr:rw
+      - ${HOST_PATH_DATA}:${ALPR_PATH_DATA} 
     depends_on:
       - mongodb
-
-    networks:    
+    networks: 
       - backend      
 
 networks:

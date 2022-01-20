@@ -30,8 +30,9 @@ class Api(object):
             full_img64 = ""
             crop_img64 = ""
             
-            # TODO buscar image_path do arquivo de configuração            
-            path_base = "/var/lib/openalpr/plateimages"
+            # TODO buscar image_path do arquivo de configuração
+            # path_base = "/var/lib/openalpr/plateimages"
+            path_base = os.environ['ALPR_PATH_IMG']
             
             # LÊ IMAGEM ORIGINAL DO DISCO E CONVERTE PARA BASE64
             full_img_dir = ("{}/full_image".format(path_base))

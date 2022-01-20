@@ -16,8 +16,8 @@ def del_doc(doc_id, file_name):
     except Exception as e:
         exception(e)
 
-    try:        
-        path_base = "/var/lib/openalpr/plateimages"            
+    try: 
+        path_base = os.environ['ALPR_PATH_IMG'] 
         full_img_dir = ("{}/full_image".format(path_base))
         crop_img_dir = ("{}/crop_image".format(path_base))
 
@@ -84,5 +84,5 @@ def cleansing():
                     print(f"{datetime.now()} - Deletando registro do banco de dados...")
                     del_doc(doc_id, file_name)            
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
     cleansing()
