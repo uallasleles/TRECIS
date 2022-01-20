@@ -1,1 +1,1 @@
-*/2 * * * * python /task.py >> /logfile
+*/1 * * * * python /task.py >> /logfile
