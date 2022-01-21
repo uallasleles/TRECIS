@@ -95,14 +95,15 @@ Add additional notes about how to deploy this on a live system.
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
+- [Docker](https://www.docker.com/) - Containers
+- [Python](https://www.python.org/) - Python
 - [MongoDB](https://www.mongodb.com/) - Database
-- [Express](https://expressjs.com/) - Server Framework
-- [VueJs](https://vuejs.org/) - Web Framework
-- [NodeJs](https://nodejs.org/en/) - Server Environment
+- [NGINX](https://www.nginx.com/) - NGINX
+- [Gunicorn](https://gunicorn.org/) - Gunicorn
 
 ## ✍️ Authors <a name = "authors"></a>
 
-- [@kylelobo](https://github.com/kylelobo) - Idea & Initial work
+- [@somebody](https://) - Idea & Initial work
 
 See also the list of [contributors](https://github.com/kylelobo/The-Documentation-Compendium/contributors) who participated in this project.
 
