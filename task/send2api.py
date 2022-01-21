@@ -22,16 +22,17 @@ class Api(object):
             self.__coord_f      = coord_final
             self.__file_name    = '{}.jpg'.format(file_name)
 
-            headers = {'Content-type': 'application/json'}
+            headers = {'Content-type': 'application/json; charset=utf8'}
 
-            url_endpoint = os.environ['URL_ENDPOINT']
+            url = os.environ['URL_ENDPOINT']
 
             # // versão 2
             full_img64 = ""
             crop_img64 = ""
             
-            # TODO buscar image_path do arquivo de configuração            
-            path_base = "/var/lib/openalpr/plateimages"
+            # TODO buscar image_path do arquivo de configuração
+            # path_base = "/var/lib/openalpr/plateimages"
+            path_base = os.environ['ALPR_PATH_IMG']
             
             # LÊ IMAGEM ORIGINAL DO DISCO E CONVERTE PARA BASE64
             full_img_dir = ("{}/full_image".format(path_base))
@@ -59,16 +60,18 @@ class Api(object):
                     'full_img64': full_img64,
                     'crop_img64': crop_img64,
                 },
-            }
+            }            
 
             r = requests.post(
-                url_endpoint, 
-                data=json.dumps(data , default = myconverter), 
-                headers=headers
-                )            
+                url,
+                data = json.dumps(data),
+                headers = headers
+                )
 
-            # print(r.status_code, r.reason, r.content)
-            return r.status_code            
+            if r.status_code != requests.codes.ok:
+                print(r.headers['content-type'])
+            
+            return r.status_code
 
         except OSError as err:
             logging.exception("message")

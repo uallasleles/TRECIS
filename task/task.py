@@ -16,8 +16,8 @@ def del_doc(doc_id, file_name):
     except Exception as e:
         exception(e)
 
-    try:        
-        path_base = "/var/lib/openalpr/plateimages"            
+    try: 
+        path_base = os.environ['ALPR_PATH_IMG'] 
         full_img_dir = ("{}/full_image".format(path_base))
         crop_img_dir = ("{}/crop_image".format(path_base))
 
@@ -57,32 +57,39 @@ def cleansing():
         'plate.img_name': True,        
         'plate.cam_name': True
         }
-    
+    # [pprint(i) for i in rs]
     try:
-        print(f"{datetime.now()} - Buscando novo reconhecimento de placa...")
+        print(f"{datetime.now()} - Consultando registros no banco de dados...")
         rs = db.plate.find({}, projection=projection)
+        
+        print(f"{rs.count()} registros consultados.")
     except Exception as e:
         exception(e)
-    
-    for i in rs:
-        code = None
 
-        doc_id = i['_id']
-        file_name = '{}.jpg'.format(i['plate']['img_name'])
+    if rs.count() > 0:
+        url = os.environ['URL_ENDPOINT']
+        print(f"{datetime.now()} - Fazendo solicitação de teste para o endpoint [{url}]")
 
-        # Converte de epoch time para datetime com milisegundos, (ms pois este epoch time possui 13 dígitos)
-        i['plate']['datetime'] = datetime.fromtimestamp( i['plate']['epoch_time'] / 1000 ).isoformat(sep=' ', timespec='milliseconds')
-        
-        if internet_connection.internet_connection_test() == True:
-            try:
-                print(f"{datetime.now()} - Enviando dados da placa para a API...")
-                code = send(i)
-            except Exception as e:
-                exception(e)
-            finally: 
-                if code == 200:
-                    print(f"{datetime.now()} - Deletando registro do banco de dados...")
-                    del_doc(doc_id, file_name)            
+        if internet_connection.internet_connection_test(url) == True:
+            for i in rs:
 
-if __name__ == "__main__":    
+                code = None
+                doc_id = i['_id']
+                file_name = '{}.jpg'.format(i['plate']['img_name'])
+                # Converte de epoch time para datetime com milisegundos, (ms pois este epoch time possui 13 dígitos)
+                i['plate']['datetime'] = datetime.fromtimestamp( i['plate']['epoch_time'] / 1000 ).isoformat(sep=' ', timespec='milliseconds')
+                    
+                try:
+                    print(f"{datetime.now()} - Enviando dados da {file_name} para a API...")
+                    code = send(i)
+
+                except Exception as e:
+                    exception(e)
+
+                finally: 
+                    if code == 200:
+                        print(f"{datetime.now()} - Deletando ID: {doc_id} / Placa: {i['plate']['plate']} do banco de dados...")
+                        del_doc(doc_id, file_name)
+
+if __name__ == "__main__":
     cleansing()
