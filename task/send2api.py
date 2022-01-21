@@ -68,8 +68,10 @@ class Api(object):
                 headers = headers
                 )
 
-            # print(r.status_code, r.reason, r.content)
-            return r.status_code            
+            if r.status_code != requests.codes.ok:
+                print(r.headers['content-type'])
+            
+            return r.status_code
 
         except OSError as err:
             logging.exception("message")
