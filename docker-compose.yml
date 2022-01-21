@@ -26,6 +26,9 @@ services:
       - backend
 
   mongodb:
+    build:
+      context: ./mongo
+      dockerfile: Dockerfile
     image: mongo
     container_name: mongodb
     restart: always
