@@ -22,9 +22,9 @@ class Api(object):
             self.__coord_f      = coord_final
             self.__file_name    = '{}.jpg'.format(file_name)
 
-            headers = {'Content-type': 'application/json'}
+            headers = {'Content-type': 'application/json; charset=utf8'}
 
-            url_endpoint = os.environ['URL_ENDPOINT']
+            url = os.environ['URL_ENDPOINT']
 
             # // versão 2
             full_img64 = ""
@@ -60,13 +60,13 @@ class Api(object):
                     'full_img64': full_img64,
                     'crop_img64': crop_img64,
                 },
-            }
+            }            
 
             r = requests.post(
-                url_endpoint, 
-                data=json.dumps(data , default = myconverter), 
-                headers=headers
-                )            
+                url,
+                data = json.dumps(data),
+                headers = headers
+                )
 
             # print(r.status_code, r.reason, r.content)
             return r.status_code            

@@ -1,25 +1,29 @@
+import os
 import requests
+from requests.exceptions import HTTPError
 from requests.exceptions import ConnectionError
  
  
-def internet_connection_test():
+def internet_connection_test(url):
     """
     Verifique a conectividade com a Internet
-    """    
-    url = 'https://www.google.com/'
-    print(f'Attempting to connect to {url} to determine internet connection status.')
+    """
  
-    try:
-        print(url)
-        resp = requests.get(url, timeout=10)
-        resp.text
-        resp.status_code
-        print(f'Connection to {url} was successful.')
+    try:        
+        response = requests.get(url, headers={'Accept': 'application/json; charset=utf8'})
+        response.raise_for_status()
+
+        # response.status_code
+        # response.headers['content-type']
+        # response.encoding
+        # response.text
+        # response.json()        
+        
+    except HTTPError as http_err:
+        print(f'Ocorreu um erro HTTP: {http_err}')  # Python 3.6
+        return False
+    except Exception as err:
+        print(f'Ocorreu outro erro: {err}')  # Python 3.6
+        return False
+    else:        
         return True
-    except ConnectionError as e:
-        requests.ConnectionError
-        print(f'Failed to connect to {url}.')
-        return False
-    except:
-        print(f'Failed with unparsed reason.')
-        return False
