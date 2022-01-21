@@ -24,10 +24,12 @@ class Salva(object):
                 if not cv2.imwrite(path_img, newimage, [int(cv2.IMWRITE_JPEG_QUALITY), 45]):
                     raise Exception("Could not write image")
                 return self.nome_file
+
         except OSError as err:
             # erro.grava("Save.OS error: {0}".format(err))
             logging.exception("message")
             return None
+
         except:
             # erro.grava("Save.Erro: {0}".format(sys.exc_info()[0]))
             logging.exception("message")
@@ -50,7 +52,7 @@ class Salva(object):
             return None
 
 
-def nome(placa):
-    timestr = datetime.datetime.now().strftime("%Y-%m-%d_%H")
+def nome(placa):    
+    timestr = datetime.datetime.now().strftime('%Y%m%d-%H%M%S.%f')[:-3]
     return "{}_{}".format(timestr, placa)
 
