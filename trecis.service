@@ -1,0 +1,11 @@
+[Unit]
+Description=Startup do T-Recis
+
+[Service]
+User=coi
+WorkingDirectory=/home/Source/TRECIS/
+ExecStart=docker-compose up -d
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
