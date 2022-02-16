@@ -158,3 +158,5 @@ cython_debug/
 #.idea/
 openalpr/openalpr_system_status.json
 openalpr/openalpr_system_status.json
+manager/nohup.out
+manager/logfile.txt
