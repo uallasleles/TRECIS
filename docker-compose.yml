@@ -2,78 +2,30 @@ version: '3.9'
 
 services:
 
-  flask:
-    build:
-      context: ./app
-      dockerfile: Dockerfile
-    container_name: app
-    image: flask
-    restart: always
-    environment:
-      MONGODB_DATABASE: ${MONGODB_DATABASE}
-      MONGODB_USERNAME: ${MONGODB_USERNAME}
-      MONGODB_PASSWORD: ${MONGODB_PASSWORD}
-      MONGODB_HOSTNAME: ${MONGODB_HOSTNAME}
-      URL_ENDPOINT:     ${URL_ENDPOINT}
-    volumes:
-      - appdata:/var/www 
-    depends_on:
-      - mongodb
-    ports:
-      - "5000:5000"
-    networks:
-      - frontend
-      - backend
-
   mongodb:
     build:
       context: ./mongo
       dockerfile: Dockerfile
     image: mongo
     container_name: mongodb
-    restart: always
     command: mongod --auth
+    restart: always
     ports:
       - "27017:27017"
     environment:
+      MONGODB_HOSTNAME: ${MONGODB_HOSTNAME}
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
       MONGODB_DATA: ${MONGODB_DATA}
       MONDODB_LOG: ${MONDODB_LOG}
-      APP_ENV: ${APP_ENV}
-      APP_DEBUG: ${APP_DEBUG}
-      APP_PORT: ${APP_PORT}
       MONGODB_DATABASE: ${MONGODB_DATABASE}
       MONGODB_USERNAME: ${MONGODB_USERNAME}
       MONGODB_PASSWORD: ${MONGODB_PASSWORD}
-      MONGODB_HOSTNAME: ${MONGODB_HOSTNAME}
     volumes:
-      - ${HOSTDB_DATA}:${MONGODB_DATA} 
+      - ${HOSTDB_DATA}:${MONGODB_DATA}
+      - ${HOSTDB_SOURCE}:${MONGODB_SOURCE}
     networks:
-      - backend
-
-  webserver:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    image: nginx
-    container_name: webserver
-    restart: always
-    environment:
-      APP_ENV: prod
-      APP_NAME: webserver
-      APP_DEBUG: "true"
-      SERVICE_NAME: webserver
-    ports:
-      - "8080:80"
-      - "6443:443"
-    volumes:
-      - nginxdata:/var/log/nginx
-    depends_on:
-      - flask
-    networks:
-      - frontend
       - backend
 
   openalpr:
@@ -93,9 +45,9 @@ services:
       MONGODB_PASSWORD: ${MONGODB_PASSWORD}
       MONGODB_HOSTNAME: ${MONGODB_HOSTNAME}
     volumes:
-      - ${HOST_SOURCE_ALPR}:${ALPR_PATH_SOURCE} 
-      - ${HOST_PATH_CONFIG}:${ALPR_PATH_CONFIG} 
-      - ${HOST_PATH_DATA}:${ALPR_PATH_DATA} 
+      - ${HOST_SOURCE_ALPR}:${ALPR_PATH_SOURCE}
+      - ${HOST_PATH_CONFIG}:${ALPR_PATH_CONFIG}
+      - ${HOST_PATH_DATA}:${ALPR_PATH_DATA}
     ports:
       - "11300:11300"
       - "8355:8355"
@@ -109,26 +61,28 @@ services:
     cap_add:
       - SYS_NICE
 
-  task:
+  manager:
     build:
-      context: ./task
+      context: ./manager
       dockerfile: Dockerfile
-    container_name: task
-    image: task:1
+    container_name: manager
+    image: manager
     restart: always
+    command: beanstalkd -l 127.0.0.1 -p 11300
     environment:
       MONGODB_DATABASE: ${MONGODB_DATABASE}
       MONGODB_USERNAME: ${MONGODB_USERNAME}
       MONGODB_PASSWORD: ${MONGODB_PASSWORD}
       MONGODB_HOSTNAME: ${MONGODB_HOSTNAME}
-      URL_ENDPOINT:     ${URL_ENDPOINT}
-      ALPR_PATH_IMG:    ${ALPR_PATH_IMG}
-    volumes:      
-      - ${HOST_PATH_DATA}:${ALPR_PATH_DATA} 
+      URL_ENDPOINT: ${URL_ENDPOINT}
+      ALPR_PATH_IMG: ${ALPR_PATH_IMG}
+    volumes:
+      - ${HOST_PATH_DATA}:${ALPR_PATH_DATA}
+      - ${HOST_SOURCE_MANAGER}:${MANAGER_PATH_SOURCE}
     depends_on:
       - mongodb
-    networks: 
-      - backend      
+    networks:
+      - backend
 
 networks:
   frontend:
@@ -136,10 +90,7 @@ networks:
   backend:
     driver: bridge
 
-volumes:  
+volumes:
   mongodbdata:
     driver: local
-  appdata:
-    driver: local
-  nginxdata:
-    driver: local
+
