@@ -97,14 +97,11 @@ async def preprocessor():
         await asyncio.sleep(0.01)
         img = await get_img64(file_name)
 
-        # code = None
-        # doc_id = doc['_id']
         # Converte de epoch time para datetime com milisegundos, (ms pois este epoch time possui 13 dígitos)
         doc['datetime'] = datetime.fromtimestamp( doc['epoch_time'] / 1000 ).isoformat(sep=' ', timespec='milliseconds')
-            
 
         try:
-            print(f"{datetime.now()} - Enviando dados da {file_name} para a API...")
+            print(f"{datetime.now()} - doc_id: {doc['_id']} - placa: {doc['plate']} - colocando na fila pronto para envio ...")
 
             data = {
                 'camera_id': doc['cam_name'],
