@@ -31,14 +31,13 @@ async def queue_consumer():
 
             if job is None:
                 print("Sem placas disponíveis no momento, aguardando...")
-            
             else:
                 print("Encontrou uma placa!")
                 results = json.loads(job.body)
                 print(results)
 
                 print("Job ID: {} Plate: {}".format(job.id, results['plate'].upper()))
-                # await asyncio.sleep(0.1)
+                await asyncio.sleep(0.01)
                 await add_document(results)
                 
                 # FUTURAMENTE PRETENDO FAZER ESSA VERIFICAÇÃO
@@ -52,7 +51,7 @@ async def queue_consumer():
                 #     print("Este é um heartbeat")  
                 # app.add_document(plate_data)
 
-                # await asyncio.sleep(0.1)
+                await asyncio.sleep(0.01)
                 await client.delete(job)
 
 if __name__ == "__main__":
